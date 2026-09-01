@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>User Management Dashboard</h1>
+
+    <!-- Add User Form -->
+    <form id="userForm">
+      <input type="text" id="nameInput" placeholder="Name" required>
+      <input type="email" id="emailInput" placeholder="Email" required>
+      <input type="text" id="courseInput" placeholder="Course" required>
+      <button type="submit">Add User</button>
+    </form>
+
+    <!-- Search -->
+    <input type="text" id="searchInput" placeholder="Search User...">
+
+    <!-- Course Filter (bonus) -->
+    <div class="filter-buttons">
+      <button class="filter-btn" data-course="All">All</button>
+      <button class="filter-btn" data-course="MERN">MERN</button>
+      <button class="filter-btn" data-course="React">React</button>
+      <button class="filter-btn" data-course="Node.js">Node.js</button>
+      <button class="filter-btn" data-course="C++">C++</button>
+    </div>
+
+    <!-- Total Users -->
+    <p id="totalUsers">Total Users: 0</p>
+
+    <!-- Status Messages -->
+    <p id="statusMessage"></p>
+
+    <!-- Users Table -->
+    <table id="usersTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Course</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="usersTableBody">
+        <!-- Users will be added here dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
