@@ -1,6 +1,6 @@
 // ===== Users Array =====
 let users = JSON.parse(localStorage.getItem("users")) || [];
-let editingId = null; // agar kisi user ko edit kar rahe hain to uski id yahan store hogi
+let editingId = null;
 
 // ===== DOM Elements =====
 const userForm = document.getElementById("userForm");
@@ -20,25 +20,26 @@ function saveUsers() {
   localStorage.setItem("users", JSON.stringify(users));
 }
 
-// ===== Render Users on Screen =====
+// ===== Render Users as Cards =====
 function renderUsers(userList) {
   userTableBody.innerHTML = "";
 
   if (userList.length === 0) {
-    userTableBody.innerHTML = `<tr><td colspan="4">No user found</td></tr>`;
+    userTableBody.innerHTML = `<p class="col-span-full text-center text-gray-400">No user found</p>`;
   } else {
     userList.map(user => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${user.name}</td>
-        <td>${user.email}</td>
-        <td>${user.course}</td>
-        <td>
-          <button class="edit-btn" onclick="editUser(${user.id})">Edit</button>
-          <button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button>
-        </td>
+      const card = document.createElement("div");
+      card.className = "border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition";
+      card.innerHTML = `
+        <p class="font-semibold text-gray-800">${user.name}</p>
+        <p class="text-sm text-gray-500">${user.email}</p>
+        <p class="text-sm text-gray-500 mb-3">${user.course}</p>
+        <div class="flex gap-2">
+          <button onclick="editUser(${user.id})" class="bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600 transition">Edit</button>
+          <button onclick="deleteUser(${user.id})" class="bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-600 transition">Delete</button>
+        </div>
       `;
-      userTableBody.appendChild(row);
+      userTableBody.appendChild(card);
     });
   }
 
@@ -86,14 +87,12 @@ userForm.addEventListener("submit", function (e) {
   }
 
   if (editingId) {
-    // Update existing user
     users = users.map(user =>
       user.id === editingId ? { ...user, name, email, course } : user
     );
     editingId = null;
     formSubmitBtn.textContent = "Add";
   } else {
-    // Add new user
     const newUser = { id: Date.now(), name, email, course };
     users.push(newUser);
   }
@@ -130,6 +129,7 @@ courseFilter.addEventListener("change", applyFilters);
 // ===== Fetch Users from API (only if no local data yet) =====
 async function getUsersFromAPI() {
   statusMessage.textContent = "Loading users...";
+  statusMessage.className = "text-center text-gray-500 italic mb-4";
 
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/users");
@@ -146,10 +146,12 @@ async function getUsersFromAPI() {
     }
 
     statusMessage.textContent = "";
+    statusMessage.className = "";
     applyFilters();
 
   } catch (error) {
     statusMessage.textContent = "Unable to load users.";
+    statusMessage.className = "text-center text-red-600 bg-red-50 py-2 rounded mb-4";
     console.log(error);
   }
 }
