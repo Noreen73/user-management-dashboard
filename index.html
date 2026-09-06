@@ -11,34 +11,35 @@
   <div class="container">
     <h1>User Management Dashboard</h1>
 
-    <!-- Add User Form -->
+    <!-- Add/Edit User Form -->
     <form id="userForm">
       <input type="text" id="nameInput" placeholder="Name" required>
       <input type="email" id="emailInput" placeholder="Email" required>
       <input type="text" id="courseInput" placeholder="Course" required>
-      <button type="submit">Add User</button>
+      <button type="submit" id="formSubmitBtn">Add</button>
     </form>
+    <p id="formError" class="error-text"></p>
 
     <!-- Search -->
     <input type="text" id="searchInput" placeholder="Search User...">
 
-    <!-- Course Filter (bonus) -->
-    <div class="filter-buttons">
-      <button class="filter-btn" data-course="All">All</button>
-      <button class="filter-btn" data-course="MERN">MERN</button>
-      <button class="filter-btn" data-course="React">React</button>
-      <button class="filter-btn" data-course="Node.js">Node.js</button>
-      <button class="filter-btn" data-course="C++">C++</button>
-    </div>
+    <!-- Course Filter -->
+    <select id="courseFilter">
+      <option value="All">All</option>
+      <option value="MERN">MERN</option>
+      <option value="React">React</option>
+      <option value="Node.js">Node.js</option>
+      <option value="C++">C++</option>
+    </select>
 
-    <!-- Total Users -->
-    <p id="totalUsers">Total Users: 0</p>
+    <!-- Counter -->
+    <p>Total Users: <span id="userCount">0</span></p>
 
-    <!-- Status Messages -->
+    <!-- Loading / Error message -->
     <p id="statusMessage"></p>
 
     <!-- Users Table -->
-    <table id="usersTable">
+    <table id="userTable">
       <thead>
         <tr>
           <th>Name</th>
@@ -47,8 +48,8 @@
           <th>Action</th>
         </tr>
       </thead>
-      <tbody id="usersTableBody">
-        <!-- Users will be added here dynamically -->
+      <tbody id="userTableBody">
+        <!-- Users will be added here dynamically by JavaScript -->
       </tbody>
     </table>
   </div>
