@@ -4,54 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Management Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style type="text/tailwindcss">
+    .btn-primary {
+      @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
 
-  <div class="container">
-    <h1>User Management Dashboard</h1>
+  <div class="max-w-5xl mx-auto bg-white rounded-xl shadow p-6">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-2">
+      <h1 class="text-2xl font-bold text-gray-800">User Management Dashboard</h1>
+      <p class="text-gray-600">Total Users: <span id="userCount" class="font-semibold">0</span></p>
+    </div>
 
     <!-- Add/Edit User Form -->
-    <form id="userForm">
-      <input type="text" id="nameInput" placeholder="Name" required>
-      <input type="email" id="emailInput" placeholder="Email" required>
-      <input type="text" id="courseInput" placeholder="Course" required>
-      <button type="submit" id="formSubmitBtn">Add</button>
+    <form id="userForm" class="flex flex-col md:flex-row gap-3 mb-2">
+      <input type="text" id="nameInput" placeholder="Name"
+        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+      <input type="email" id="emailInput" placeholder="Email"
+        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+      <input type="text" id="courseInput" placeholder="Course"
+        class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+      <button type="submit" id="formSubmitBtn" class="btn-primary">Add</button>
     </form>
-    <p id="formError" class="error-text"></p>
+    <p id="formError" class="text-red-600 text-sm mb-4"></p>
 
-    <!-- Search -->
-    <input type="text" id="searchInput" placeholder="Search User...">
+    <!-- Search + Filter -->
+    <div class="flex flex-col md:flex-row gap-3 mb-6">
+      <input type="text" id="searchInput" placeholder="Search User..."
+        class="w-full md:w-72 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <select id="courseFilter"
+        class="w-full md:w-48 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="All">All</option>
+        <option value="MERN">MERN</option>
+        <option value="React">React</option>
+        <option value="Node.js">Node.js</option>
+        <option value="C++">C++</option>
+      </select>
+    </div>
 
-    <!-- Course Filter -->
-    <select id="courseFilter">
-      <option value="All">All</option>
-      <option value="MERN">MERN</option>
-      <option value="React">React</option>
-      <option value="Node.js">Node.js</option>
-      <option value="C++">C++</option>
-    </select>
+    <!-- Status Message -->
+    <p id="statusMessage" class="text-center text-gray-500 italic mb-4"></p>
 
-    <!-- Counter -->
-    <p>Total Users: <span id="userCount">0</span></p>
+    <!-- User Cards -->
+    <div id="userTableBody" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-    <!-- Loading / Error message -->
-    <p id="statusMessage"></p>
-
-    <!-- Users Table -->
-    <table id="userTable">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Course</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="userTableBody">
-        <!-- Users will be added here dynamically by JavaScript -->
-      </tbody>
-    </table>
   </div>
 
   <script src="script.js"></script>
