@@ -8,71 +8,90 @@ import UserTable from "./components/UserTable";
 import StatusMessage from "./components/StatusMessage";
 import ConfirmDialog from "./components/ConfirmDialog";
 import BackendStatus from "./components/BackendStatus";
+import Toast from "./components/Toast";
+
+const API_URL = "http://localhost:5000/api/users";
 
 function App() {
-  const [users, setUsers] = useState(() => {
-    const saved = localStorage.getItem("users");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [courseFilter, setCourseFilter] = useState("All");
   const [editingUser, setEditingUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [toast, setToast] = useState(null); // { type: "success" | "error", message: string }
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";
   });
 
   useEffect(() => {
-    localStorage.setItem("users", JSON.stringify(users));
-  }, [users]);
-
-  useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("users");
-    if (saved && JSON.parse(saved).length > 0) return;
+  function showToast(type, message) {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 3000);
+  }
 
-    let cancelled = false;
-
-    async function getUsersFromAPI() {
-      setLoading(true);
-      setError(false);
-      try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/users");
-        const data = await response.json();
-        const formatted = data.map((u) => ({
-          id: u.id,
-          name: u.name,
-          email: u.email,
-          course: "MERN",
-          source: "api",
-        }));
-        if (!cancelled) setUsers(formatted);
-      } catch (err) {
-        if (!cancelled) setError(true);
-        console.log(err);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+  // ===== Fetch all users from Express backend =====
+  async function fetchUsers() {
+    setLoading(true);
+    setError(false);
+    try {
+      const response = await fetch(API_URL);
+      const result = await response.json();
+      setUsers(result.data || []);
+    } catch (err) {
+      setError(true);
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    getUsersFromAPI();
-
-    return () => {
-      cancelled = true;
-    };
+  useEffect(() => {
+    fetchUsers();
   }, []);
 
-  function handleAddUser(userData) {
-    if (editingUser) {
-      setUsers(users.map((u) => (u.id === editingUser.id ? { ...u, ...userData } : u)));
-      setEditingUser(null);
-    } else {
-      setUsers([...users, { id: Date.now(), ...userData, source: "local" }]);
+  // ===== Add or Update user =====
+  async function handleAddUser(userData) {
+    try {
+      if (editingUser) {
+        const response = await fetch(`${API_URL}/${editingUser.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData),
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+          showToast("error", result.message || "Failed to update user");
+          return;
+        }
+
+        setUsers(users.map((u) => (u.id === editingUser.id ? result.data : u)));
+        setEditingUser(null);
+        showToast("success", "User updated successfully");
+      } else {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userData),
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+          showToast("error", result.message || "Failed to add user");
+          return;
+        }
+
+        setUsers([...users, result.data]);
+        showToast("success", "User added successfully");
+      }
+    } catch (err) {
+      showToast("error", "Could not reach the server");
+      console.log(err);
     }
   }
 
@@ -84,9 +103,27 @@ function App() {
     setUserToDelete(user);
   }
 
-  function confirmDelete() {
-    setUsers(users.filter((u) => u.id !== userToDelete.id));
-    setUserToDelete(null);
+  async function confirmDelete() {
+    try {
+      const response = await fetch(`${API_URL}/${userToDelete.id}`, {
+        method: "DELETE",
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        showToast("error", result.message || "Failed to delete user");
+        setUserToDelete(null);
+        return;
+      }
+
+      setUsers(users.filter((u) => u.id !== userToDelete.id));
+      showToast("success", "User deleted successfully");
+    } catch (err) {
+      showToast("error", "Could not reach the server");
+      console.log(err);
+    } finally {
+      setUserToDelete(null);
+    }
   }
 
   function cancelDelete() {
@@ -103,9 +140,6 @@ function App() {
     .filter((u) => u.name.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((u) => courseFilter === "All" || u.course === courseFilter);
 
-  const apiCount = users.filter((u) => u.source === "api").length;
-  const localCount = users.filter((u) => u.source === "local").length;
-
   return (
     <div className={darkMode ? "dark" : ""}>
       <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-950 min-h-screen p-4 md:p-8 transition-colors">
@@ -120,7 +154,7 @@ function App() {
             <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">Users</h2>
             <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">Manage all users</p>
 
-            <StatsCards total={users.length} apiCount={apiCount} localCount={localCount} />
+            <StatsCards total={users.length} />
 
             <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
@@ -144,6 +178,8 @@ function App() {
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
       />
+
+      <Toast toast={toast} />
     </div>
   );
 }
