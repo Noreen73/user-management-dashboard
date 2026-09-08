@@ -1,20 +1,17 @@
 # User Management Dashboard
 
-A full-stack-in-progress User Management Dashboard — built as part of MERN stack preparation. The project evolved step by step: starting from vanilla JavaScript, then Tailwind CSS styling, then a full React rebuild, and now a basic Node.js backend layer.
+A full-stack User Management Dashboard — built step by step as part of MERN stack preparation. The project evolved from vanilla JavaScript, to Tailwind CSS styling, to a full React rebuild, and now has an Express.js REST API backend.
 
 ## ✨ Features
 
-- Add, edit, search, and delete users
-- Course filter (All, MERN, React, Node.js, C++)
-- Form validation (required fields + valid email format)
-- Data persistence using LocalStorage
-- Fetches initial user data from the JSONPlaceholder API using async/await
-- Loading and error states
+- Add, edit, search, and delete users (fully connected to a real backend API)
+- Course filter (All, MERN, React, Node.js, C++) with live counts
+- Form validation (required fields + valid email format) on both frontend and backend
+- Success/error toast notifications for every backend action
 - Dark mode toggle
 - Delete confirmation dialog
 - Fully responsive design (mobile, tablet, desktop)
-- Custom purple/indigo themed UI with reusable components
-- Node.js backend with a live status endpoint, connected to the React frontend
+- Custom purple/indigo themed UI
 
 ## 🧱 Tech Stack
 
@@ -25,7 +22,10 @@ A full-stack-in-progress User Management Dashboard — built as part of MERN sta
 - Fetch API
 
 **Backend**
-- Node.js (built-in `http` module)
+- Node.js
+- Express.js
+- CORS
 - dotenv (environment variable management)
+- nodemon (development auto-restart)
 
 ## 📁 Project Structure
