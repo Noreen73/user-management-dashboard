@@ -6,14 +6,18 @@ let users = [
 ];
 let nextId = 4;
 
-// GET /api/users  (supports ?search=)
+// GET /api/users  (supports ?search= across name, email, course)
 function getAllUsers(req, res) {
   const { search } = req.query;
   let result = users;
 
   if (search) {
-    result = users.filter((u) =>
-      u.name.toLowerCase().includes(search.toLowerCase())
+    const term = search.toLowerCase();
+    result = users.filter(
+      (u) =>
+        u.name.toLowerCase().includes(term) ||
+        u.email.toLowerCase().includes(term) ||
+        u.course.toLowerCase().includes(term)
     );
   }
 
@@ -32,14 +36,17 @@ function getUserById(req, res) {
   res.status(200).json({ success: true, data: user });
 }
 
-// POST /api/users
+// POST /api/users  (name/email/course already validated + trimmed by middleware)
 function createUser(req, res) {
   const { name, email, course } = req.body;
 
-  if (!name || !email || !course) {
+  const emailExists = users.some(
+    (u) => u.email.toLowerCase() === email.toLowerCase()
+  );
+  if (emailExists) {
     return res.status(400).json({
       success: false,
-      message: "Name, email and course are all required",
+      message: "A user with this email already exists",
     });
   }
 
@@ -60,10 +67,13 @@ function updateUser(req, res) {
 
   const { name, email, course } = req.body;
 
-  if (!name || !email || !course) {
+  const emailTakenByAnother = users.some(
+    (u) => u.id !== id && u.email.toLowerCase() === email.toLowerCase()
+  );
+  if (emailTakenByAnother) {
     return res.status(400).json({
       success: false,
-      message: "Name, email and course are all required",
+      message: "Another user is already using this email",
     });
   }
 
