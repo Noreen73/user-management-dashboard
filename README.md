@@ -1,12 +1,14 @@
 # User Management Dashboard
 
-A full-stack User Management Dashboard — built step by step as part of MERN stack preparation. The project evolved from vanilla JavaScript, to Tailwind CSS styling, to a full React rebuild, and now has an Express.js REST API backend.
+A full-stack User Management Dashboard — built step by step as part of MERN stack preparation. The project evolved from vanilla JavaScript, to Tailwind CSS styling, to a full React rebuild, and now has a professional Express.js REST API backend.
 
 ## ✨ Features
 
 - Add, edit, search, and delete users (fully connected to a real backend API)
 - Course filter (All, MERN, React, Node.js, C++) with live counts
-- Form validation (required fields + valid email format) on both frontend and backend
+- Search supports matching by name, email, or course
+- Form validation on both frontend and backend (required fields + valid email format)
+- Backend validation middleware: trimmed inputs, duplicate email prevention
 - Success/error toast notifications for every backend action
 - Dark mode toggle
 - Delete confirmation dialog
