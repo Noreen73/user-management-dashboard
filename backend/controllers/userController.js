@@ -6,18 +6,24 @@ let users = [
 ];
 let nextId = 4;
 
-// GET /api/users  (supports ?search= across name, email, course)
+// GET /api/users  (supports ?search= across name/email/course, and ?course= exact filter)
 function getAllUsers(req, res) {
-  const { search } = req.query;
+  const { search, course } = req.query;
   let result = users;
 
   if (search) {
     const term = search.toLowerCase();
-    result = users.filter(
+    result = result.filter(
       (u) =>
         u.name.toLowerCase().includes(term) ||
         u.email.toLowerCase().includes(term) ||
         u.course.toLowerCase().includes(term)
+    );
+  }
+
+  if (course) {
+    result = result.filter(
+      (u) => u.course.toLowerCase() === course.toLowerCase()
     );
   }
 
